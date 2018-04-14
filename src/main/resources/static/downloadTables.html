@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+    <meta charset="utf-8">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <title>DownloadTables</title>
+    <style type="text/css">
+    body {
+        margin: 0 auto;
+        padding: 0;
+        background-color: #eff3f5;
+        min-width: 1400px;
+    }
+
+    .container {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        margin-left: -480px;
+        margin-top: -150px;
+        height: 300px;
+        width: 952px;
+    }
+
+    .wrap {
+        float: left;
+        width: 300px;
+        height: 300px;
+        border: solid #dfdfdd 2px;
+        border-radius: 20px;
+        background-color: white;
+    }
+
+    .wrap h1 {
+        text-align: center;
+        border-bottom: solid #dfdfdd 1px;
+    }
+
+    button {
+        display: block;
+        margin: 10px auto 0;
+        border: none;
+        outline: none;
+        height: 30px;
+        border-radius: 20px;
+        width: 80%;
+    }
+
+    button:hover {
+        cursor: pointer;
+        background-color: #2196f3;
+        color: white;
+        border-color: #2196f3;
+        box-shadow: 0 0 2px #2196f3;
+    }
+
+    .date-picker {
+        width: 80%;
+        height: 30px;
+        margin: 0 auto;
+        text-align: center;
+    }
+    </style>
+</head>
+
+<body onload="initDatePicker()">
+    <div class="container">
+        <div class="wrap">
+            <h1>总量查询</h1>
+            <button onclick="aboutTotal('total')">打车总量</button>
+            <button onclick="aboutTotal('income')">司机总收入</button>
+            <button onclick="aboutTotal('empty')">空载总量</button>
+        </div>
+        <div class="wrap" style="margin-left: 20px;">
+            <h1>按天查询</h1>
+            <div class="date-picker">
+                <label>2017年</label>
+                <select id="month" onchange="chDay()">
+                    <option>2</option>
+                    <option>3</option>
+                </select>
+                <label>月</label>
+                <select id="day">
+                </select>
+                <label>日</label>
+            </div>
+            <button onclick="aboutDay('income-hour')">司机收入</button>
+            <button onclick="aboutDay('empty-hour')">空载量</button>
+        </div>
+        <div class="wrap" style="margin-left: 20px;">
+            <h1>按时查询</h1>
+            <div class="date-picker">
+                <select id="startTime" onchange="chEndTime()">
+                </select>
+                <label>点至点</label>
+                <select id="endTime">
+                </select>
+            </div>
+            <button onclick="aboutHour('income-custom-query')">查询该时间段司机的收入</button>
+            <button onclick="aboutHour('empty-custom-query')">查询该时间段空载量</button>
+        </div>
+    </div>
+    <script>
+    var mon = document.getElementById('month');
+    var day = document.getElementById('day');
+    var sT = document.getElementById('startTime');
+    var eT = document.getElementById('endTime');
+    var urlBase = 'http://10.21.48.11:8086/';
+    var action = null;
+
+    function initDatePicker() {
+        for (var i = 0; i < 24; i++) {
+            var op = document.createElement('option');
+            op.innerHTML = i;
+            sT.appendChild(op);
+        }
+        chDay();
+        chEndTime();
+    }
+
+    function chDay() {
+        var days = mon.value == 2 ? 29 : 32;
+        for (var i = 1; i < days; i++) {
+            var op = document.createElement('option');
+            op.innerHTML = i;
+            day.appendChild(op);
+        }
+
+    }
+
+    function chEndTime() {
+        var cur = Number(sT.value) + 1;
+        eT.innerHTML = '';
+        for (var i = cur; i < 24; i++) {
+            var op = document.createElement('option');
+            op.innerHTML = i;
+            eT.appendChild(op);
+        }
+    }
+
+    function aboutTotal(wt) {
+        url = urlBase + wt;
+        $.ajax({
+            url: url,
+            type: 'POST',
+            dataType: 'json',
+            success: function(re) {
+                window.open(urlBase+re.link);
+            },
+            error: function(re) {
+                alert(re.textStatus);
+            }
+        });
+    }
+
+    function aboutDay(wt) {
+        url = urlBase + wt;
+        if (day.value < 10) {
+            var sd = '-' + 0 + day.value;
+        } else {
+            var sd = '-' + day.value;
+        }
+        var data = {
+            day: '2017-0' + mon.value + sd
+        };
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType:"application/json",
+            dataType: 'json',
+            success: function(re) {
+                window.open(urlBase+re.link);
+            },
+            error: function(re) {
+                alert(re.textStatus);
+            }
+        });
+    }
+
+    function aboutHour(wt) {
+        url = urlBase + wt;
+        var data = {
+            startTime: sT.value,
+            endTime: eT.value
+        };
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType:"application/json",
+            dataType: 'json',
+            success: function(re) {
+                window.open(urlBase+re.link);
+            },
+            error: function(re) {
+                alert(re.textStatus);
+            }
+        });
+    }
+    </script>
+</body>
+
+</html>
