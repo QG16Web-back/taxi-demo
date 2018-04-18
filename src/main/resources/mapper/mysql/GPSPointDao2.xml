@@ -7,19 +7,19 @@
 
     <!--映射实体对象-->
     <resultMap id="GPSPointResultMap" type="com.qg.taxi.model.GPSPoint">
-        <id property="id" column="ID" />
-        <result property="licenseplateno" column="LICENSEPLATENO" />
+        <id property="id" column="ID"/>
+        <result property="licenseplateno" column="LICENSEPLATENO"/>
         <result property="gps_date" column="GPS_TIME" javaType="java.util.Date"/>
-        <result property="longitude" column="LONGITUDE" />
-        <result property="latitude" column="LATITUDE" />
-        <result property="speed" column="SPEED" />
-        <result property="car_stat1" column="CAR_STAT1" />
+        <result property="longitude" column="LONGITUDE"/>
+        <result property="latitude" column="LATITUDE"/>
+        <result property="speed" column="SPEED"/>
+        <result property="car_stat1" column="CAR_STAT1"/>
     </resultMap>
 
     <insert id="addPointList11" parameterType="com.qg.taxi.model.GPSPoint">
         INSERT INTO gpsdata11(GEOHASH,LICENSEPLATENO,GPS_TIME,LONGITUDE,LATITUDE,SPEED,CAR_STAT1)
         VALUES
-        <foreach collection="list" item="item" index="index" separator =",">
+        <foreach collection="list" item="item" index="index" separator=",">
             (
             (SELECT ST_GEOHASH(#{item.longitude},#{item.latitude}, 7)),
             #{item.licenseplateno},
@@ -35,7 +35,7 @@
     <insert id="addPointList12" parameterType="com.qg.taxi.model.GPSPoint">
         INSERT INTO gpsdata12(GEOHASH,LICENSEPLATENO,GPS_TIME,LONGITUDE,LATITUDE,SPEED,CAR_STAT1)
         VALUES
-        <foreach collection="list" item="item" index="index" separator =",">
+        <foreach collection="list" item="item" index="index" separator=",">
             (
             (SELECT ST_GEOHASH(#{item.longitude},#{item.latitude}, 7)),
             #{item.licenseplateno},
@@ -51,7 +51,7 @@
     <insert id="addPointList13" parameterType="com.qg.taxi.model.GPSPoint">
         INSERT INTO gpsdata13(GEOHASH,LICENSEPLATENO,GPS_TIME,LONGITUDE,LATITUDE,SPEED,CAR_STAT1)
         VALUES
-        <foreach collection="list" item="item" index="index" separator =",">
+        <foreach collection="list" item="item" index="index" separator=",">
             (
             (SELECT ST_GEOHASH(#{item.longitude},#{item.latitude}, 7)),
             #{item.licenseplateno},
@@ -67,7 +67,7 @@
     <insert id="addPointList14" parameterType="com.qg.taxi.model.GPSPoint">
         INSERT INTO gpsdata14(GEOHASH,LICENSEPLATENO,GPS_TIME,LONGITUDE,LATITUDE,SPEED,CAR_STAT1)
         VALUES
-        <foreach collection="list" item="item" index="index" separator =",">
+        <foreach collection="list" item="item" index="index" separator=",">
             (
             (SELECT ST_GEOHASH(#{item.longitude},#{item.latitude}, 7)),
             #{item.licenseplateno},
@@ -83,7 +83,7 @@
     <insert id="addPointList15" parameterType="com.qg.taxi.model.GPSPoint">
         INSERT INTO gpsdata15(GEOHASH,LICENSEPLATENO,GPS_TIME,LONGITUDE,LATITUDE,SPEED,CAR_STAT1)
         VALUES
-        <foreach collection="list" item="item" index="index" separator =",">
+        <foreach collection="list" item="item" index="index" separator=",">
             (
             (SELECT ST_GEOHASH(#{item.longitude},#{item.latitude}, 7)),
             #{item.licenseplateno},
@@ -99,7 +99,7 @@
     <insert id="addPointList16" parameterType="com.qg.taxi.model.GPSPoint">
         INSERT INTO gpsdata16(GEOHASH,LICENSEPLATENO,GPS_TIME,LONGITUDE,LATITUDE,SPEED,CAR_STAT1)
         VALUES
-        <foreach collection="list" item="item" index="index" separator =",">
+        <foreach collection="list" item="item" index="index" separator=",">
             (
             (SELECT ST_GEOHASH(#{item.longitude},#{item.latitude}, 7)),
             #{item.licenseplateno},
@@ -115,7 +115,7 @@
     <insert id="addPointList17" parameterType="com.qg.taxi.model.GPSPoint">
         INSERT INTO gpsdata17(GEOHASH,LICENSEPLATENO,GPS_TIME,LONGITUDE,LATITUDE,SPEED,CAR_STAT1)
         VALUES
-        <foreach collection="list" item="item" index="index" separator =",">
+        <foreach collection="list" item="item" index="index" separator=",">
             (
             (SELECT ST_GEOHASH(#{item.longitude},#{item.latitude}, 7)),
             #{item.licenseplateno},
@@ -131,7 +131,7 @@
     <insert id="addPointList18" parameterType="com.qg.taxi.model.GPSPoint">
         INSERT INTO gpsdata18(GEOHASH,LICENSEPLATENO,GPS_TIME,LONGITUDE,LATITUDE,SPEED,CAR_STAT1)
         VALUES
-        <foreach collection="list" item="item" index="index" separator =",">
+        <foreach collection="list" item="item" index="index" separator=",">
             (
             (SELECT ST_GEOHASH(#{item.longitude},#{item.latitude}, 7)),
             #{item.licenseplateno},
@@ -147,7 +147,7 @@
     <insert id="addPointList19" parameterType="com.qg.taxi.model.GPSPoint">
         INSERT INTO gpsdata19(GEOHASH,LICENSEPLATENO,GPS_TIME,LONGITUDE,LATITUDE,SPEED,CAR_STAT1)
         VALUES
-        <foreach collection="list" item="item" index="index" separator =",">
+        <foreach collection="list" item="item" index="index" separator=",">
             (
             (SELECT ST_GEOHASH(#{item.longitude},#{item.latitude}, 7)),
             #{item.licenseplateno},
@@ -162,7 +162,7 @@
     <insert id="addPointList20" parameterType="com.qg.taxi.model.GPSPoint">
         INSERT INTO gpsdata20(GEOHASH,LICENSEPLATENO,GPS_TIME,LONGITUDE,LATITUDE,SPEED,CAR_STAT1)
         VALUES
-        <foreach collection="list" item="item" index="index" separator =",">
+        <foreach collection="list" item="item" index="index" separator=",">
             (
             (SELECT ST_GEOHASH(#{item.longitude},#{item.latitude}, 7)),
             #{item.licenseplateno},

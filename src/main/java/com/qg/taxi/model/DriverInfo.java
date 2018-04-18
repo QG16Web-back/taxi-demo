@@ -1,73 +1,44 @@
 package com.qg.taxi.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 /**
  * @author <a href="http://minsming.com">小铭</a>
  * Date: 2018/3/29
  * No struggle, talent how to match the willfulness.
  * Description:
  */
+@NoArgsConstructor
+@Setter
+@Getter
+@ToString
 public class DriverInfo {
+    /**
+     * 车牌号
+     */
     private String number;
 
+    /**
+     * 收入
+     */
     private double income;
 
+    /**
+     * 空载里程
+     */
     private double emptyMileage;
 
+    /**
+     * 日期
+     */
     private String day;
 
+    /**
+     * 小时0-23
+     */
     private int hour;
 
-    public int getHour() {
-        return hour;
-    }
-
-    public void setHour(int hour) {
-        this.hour = hour;
-    }
-
-    public String getDay() {
-        return day;
-    }
-
-    public void setDay(String day) {
-        this.day = day;
-    }
-
-    public DriverInfo() {
-    }
-
-    public String getNumber() {
-        return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    public double getIncome() {
-        return income;
-    }
-
-    public void setIncome(double income) {
-        this.income = income;
-    }
-
-    public double getEmptyMileage() {
-        return emptyMileage;
-    }
-
-    public void setEmptyMileage(double emptyMileage) {
-        this.emptyMileage = emptyMileage;
-    }
-
-    @Override
-    public String toString() {
-        return "DriverInfo{" +
-                "number='" + number + '\'' +
-                ", income=" + income +
-                ", emptyMileage=" + emptyMileage +
-                ", day='" + day + '\'' +
-                ", hour=" + hour +
-                '}';
-    }
 }

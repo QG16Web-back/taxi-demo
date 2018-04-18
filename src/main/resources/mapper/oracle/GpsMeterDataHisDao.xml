@@ -40,20 +40,28 @@
         <result property="getOffLatitude" column="GET_OFF_LATITUDE"/>
     </resultMap>
     <select id="selectHisByNum" resultMap="GpsMeterDataHisMap">
-        SELECT * FROM
-        ( select a.*, ROWNUM rnum from
-        AUDITOR.TAXI_METER_DATA_HIS a
-        where ROWNUM &lt; #{end} )
-        where rnum  &gt;= #{start}
+        SELECT *
+        FROM
+            (select
+                 a.*,
+                 ROWNUM rnum
+             from
+                 AUDITOR.TAXI_METER_DATA_HIS a
+             where ROWNUM &lt; #{end})
+        where rnum &gt;= #{start}
     </select>
 
     <!-- 从oracle中拿出表二的数据，一般一次性拿十万条-->
     <select id="selectOperateHisByNum" resultMap="GpsOperateHisMap">
-        SELECT * FROM
-        ( select a.*, ROWNUM rnum from
-        CLEARING.OPERATE_HIS a
-        where ROWNUM &lt; #{end} )
-        where rnum  &gt;= #{start}
+        SELECT *
+        FROM
+            (select
+                 a.*,
+                 ROWNUM rnum
+             from
+                 CLEARING.OPERATE_HIS a
+             where ROWNUM &lt; #{end})
+        where rnum &gt;= #{start}
     </select>
 
 </mapper>

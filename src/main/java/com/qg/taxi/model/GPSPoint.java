@@ -1,5 +1,10 @@
 package com.qg.taxi.model;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.util.Date;
 
 /**
@@ -7,19 +12,44 @@ import java.util.Date;
  * Created by FunriLy on 2017/7/30.
  * From small beginnings comes great things.
  */
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
 public class GPSPoint {
 
-    private long id;                        //增加的属性，为了方便MySQL操作，已经设置添加时自动增加主键
-    private String licenseplateno;          //车牌号
-    private Date gps_date;                  //GPS时间
-    private double longitude;               //经度
-    private double latitude;                //纬度
-    private int speed;                   //速度
-    private String direction;               //方向
-    private String car_stat1;               //车辆状态 (1防盗 ; 2 防劫; 4空车 ; 5 重车; 6 点火; 7 熄火)
-
-    public GPSPoint() {
-    }
+    /**
+     * 增加的属性，为了方便MySQL操作，已经设置添加时自动增加主键
+     */
+    private long id;
+    /**
+     * 车牌号
+     */
+    private String licenseplateno;
+    /**
+     * GPS时间
+     */
+    private Date gps_date;
+    /**
+     * 经度
+     */
+    private double longitude;
+    /**
+     * 纬度
+     */
+    private double latitude;
+    /**
+     * 速度
+     */
+    private int speed;
+    /**
+     * 方向
+     */
+    private String direction;
+    /**
+     * 车辆状态 (1防盗 ; 2 防劫; 4空车 ; 5 重车; 6 点火; 7 熄火)
+     */
+    private String car_stat1;
 
     /**
      * 构造器
@@ -34,83 +64,5 @@ public class GPSPoint {
         this.speed = Integer.valueOf(gpsLog.getSpeed());
         this.direction = gpsLog.getDirection();
         this.car_stat1 = gpsLog.getCar_stat1();
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getLicenseplateno() {
-        return licenseplateno;
-    }
-
-    public void setLicenseplateno(String licenseplateno) {
-        this.licenseplateno = licenseplateno;
-    }
-
-    public Date getGps_date() {
-        return gps_date;
-    }
-
-    public void setGps_date(Date gps_date) {
-        this.gps_date = gps_date;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public int getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(int speed) {
-        this.speed = speed;
-    }
-
-    public String getDirection() {
-        return direction;
-    }
-
-    public void setDirection(String direction) {
-        this.direction = direction;
-    }
-
-    public String getCar_stat1() {
-        return car_stat1;
-    }
-
-    public void setCar_stat1(String car_stat1) {
-        this.car_stat1 = car_stat1;
-    }
-
-    @Override
-    public String toString() {
-        return "GPSPoint{" +
-                "id=" + id +
-                ", licenseplateno='" + licenseplateno + '\'' +
-                ", gps_date=" + gps_date +
-                ", longitude='" + longitude + '\'' +
-                ", latitude='" + latitude + '\'' +
-                ", speed='" + speed + '\'' +
-                ", direction='" + direction + '\'' +
-                ", car_stat1='" + car_stat1 + '\'' +
-                '}';
     }
 }
