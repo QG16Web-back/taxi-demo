@@ -15,7 +15,7 @@
         <groupId>com.qg</groupId>
         <artifactId>taxi-demo</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath>../pom.xml</relativePath>  <!-- lookup parent from repository -->
     </parent>
 
     <properties>
@@ -53,15 +53,4 @@
             <artifactId>dao</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
-
-
 </project>

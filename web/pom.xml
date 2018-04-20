@@ -15,7 +15,7 @@
         <groupId>com.qg</groupId>
         <artifactId>taxi-demo</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath>../pom.xml</relativePath>  <!-- lookup parent from repository -->
     </parent>
 
     <properties>
@@ -63,11 +63,21 @@
     <build>
         <plugins>
             <plugin>
+                <configuration>
+                    <mainClass>com.qg.taxi.web.WebApplication</mainClass>
+                    <layout>ZIP</layout>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+
+                </executions>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
-
-
 </project>
