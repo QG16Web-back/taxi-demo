@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.qg.taxi.model.DriverInfo;
 import com.qg.taxi.model.ExcelPropertyIndexModel;
 import com.qg.taxi.model.TakeTaxiCount;
+import com.qg.taxi.other.exception.StorageFileNotFoundException;
 import com.qg.taxi.service.EmptyMileageCustomQueryService;
 import com.qg.taxi.service.EmptyMileageService;
 import com.qg.taxi.service.HourEmptyMileageService;
@@ -11,18 +12,23 @@ import com.qg.taxi.service.HourIncomeService;
 import com.qg.taxi.service.IncomeService;
 import com.qg.taxi.service.IncomeServiceCustomQuery;
 import com.qg.taxi.service.MeterDataService;
+import com.qg.taxi.service.StorageService;
 import com.qg.taxi.util.ConcurrentDateUtil;
 import com.qg.taxi.util.ExcelUtil;
 import com.qg.taxi.util.SpringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -50,6 +56,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MeterDataController {
 
     private final MeterDataService service;
+
+    private final StorageService storageService;
 
     private final String[] title = {
             "车牌号", "2017-02-01", "2017-02-02", "2017-02-03",
@@ -79,8 +87,9 @@ public class MeterDataController {
     };
 
     @Autowired
-    public MeterDataController(MeterDataService service) {
+    public MeterDataController(MeterDataService service, StorageService storageService) {
         this.service = service;
+        this.storageService = storageService;
     }
 
     @RequestMapping(
@@ -88,8 +97,7 @@ public class MeterDataController {
             method = RequestMethod.POST,
             produces = "application/json"
     )
-    public Map<String, String> getEmptyByCustomQuery(HttpServletRequest request, @RequestBody Map<String, String> map) throws IOException,
-            ParseException {
+    public Map<String, String> getEmptyByCustomQuery(@RequestBody Map<String, String> map) throws ParseException {
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("查询-%d").build();
         Map<String, double[]> dataMap = new HashMap<>();
         long start = System.currentTimeMillis();
@@ -147,14 +155,10 @@ public class MeterDataController {
         }
         pool.shutdown();
         long end = System.currentTimeMillis();
+
+        String filename = "按天划分-自定义（" + map.get("startTime") + "-" + map.get("endTime") + "）-空载量(单位：公里).xls";
+        ExcelUtil.writeData(filename, title, dataMap, "sheet");
         System.out.println("按天划分查询时间（空载量）:" + (end - start));
-        File file = new File(request.getServletContext().getRealPath("/take-taxi/按天划分-自定义（" + map.get("startTime") +
-                "-" + map.get("endTime") + "）-空载量(单位：公里).xls"));
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-        ExcelUtil.writeData(request.getServletContext().getRealPath("/take-taxi/按天划分-自定义（" + map.get("startTime") +
-                "-" + map.get("endTime") + "）-空载量(单位：公里).xls"), title, dataMap, "sheet");
         Map<String, String> result = new HashMap<>(1);
         result.put("link", "take-taxi/按天划分-自定义（" + map.get("startTime") +
                 "-" + map.get("endTime") + "）-空载量(单位：公里).xls");
@@ -166,8 +170,7 @@ public class MeterDataController {
             method = RequestMethod.POST,
             produces = "application/json"
     )
-    public Map<String, String> getIncomeByCustomQuery(HttpServletRequest request, @RequestBody Map<String, String> map) throws IOException,
-            ParseException {
+    public Map<String, String> getIncomeByCustomQuery(@RequestBody Map<String, String> map) throws ParseException {
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("查询-%d").build();
         // Common Thread Pool
         ExecutorService pool = new ThreadPoolExecutor(
@@ -214,18 +217,13 @@ public class MeterDataController {
             dataMap.get(info.getNumber())[(int) ((date1.getTime() - date.getTime()) / (1000 * 3600 * 24))] = info.getIncome();
         }
 
-        File file = new File(request.getServletContext().getRealPath("/take-taxi/按天划分-自定义（" + map.get("startTime") +
-                "-" + map.get("endTime") + "）-收入(单位：元).xls"));
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-        ExcelUtil.writeData(request.getServletContext().getRealPath("/take-taxi/按天划分-自定义（" + map.get("startTime") +
-                "-" + map.get("endTime") + "）-收入(单位：元).xls"), title, dataMap, "sheet");
+        String filename = "按天划分-自定义（" + map.get("startTime") + "-" + map.get("endTime") + "）-收入(单位：元).xls";
+        ExcelUtil.writeData(filename, title, dataMap, "sheet");
         pool.shutdown();
         long end = System.currentTimeMillis();
         System.out.println("按天划分自查询时间（收入）" + (end - start));
         Map<String, String> result = new HashMap<>(1);
-        result.put("link", "take-taxi/按天划分-自定义（" + map.get("startTime") +
+        result.put("link", "files/按天划分-自定义（" + map.get("startTime") +
                 "-" + map.get("endTime") + "）-收入(单位：元).xls");
         return result;
     }
@@ -235,9 +233,7 @@ public class MeterDataController {
             method = RequestMethod.POST,
             produces = "application/json"
     )
-    public Map<String, String> getEmptyMileageByHour(HttpServletRequest request, @RequestBody Map<String, String> map) throws IOException,
-            ParseException {
-
+    public Map<String, String> getEmptyMileageByHour(@RequestBody Map<String, String> map) throws ParseException {
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("查询-%d").build();
         Date startDay = ConcurrentDateUtil.parse("2017-02-01");
         Date date = ConcurrentDateUtil.parse(map.get("day"));
@@ -278,16 +274,13 @@ public class MeterDataController {
             dataMap.get(info.getNumber())[info.getHour()] = info.getEmptyMileage();
         }
 
-        File file = new File(request.getServletContext().getRealPath("/take-taxi/" + map.get("day") + "-空载量（单位：公里）.xls"));
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-        ExcelUtil.writeData(request.getServletContext().getRealPath("/take-taxi/" + map.get("day") + "-空载量（单位：公里）.xls"), hourTitle, dataMap, "sheet");
+        String filename = map.get("day") + "-空载量（单位：公里）.xls";
+        ExcelUtil.writeData(filename, hourTitle, dataMap, "sheet");
         long end = System.currentTimeMillis();
         System.out.println("按小时划分查询时间（空载量）：" + (end - start));
         pool.shutdown();
         Map<String, String> result = new HashMap<>(1);
-        result.put("link", "take-taxi/" + map.get("day") + "-空载量（单位：公里）.xls");
+        result.put("link", "files/" + map.get("day") + "-空载量（单位：公里）.xls");
         return result;
     }
 
@@ -296,7 +289,7 @@ public class MeterDataController {
             method = RequestMethod.POST,
             produces = "application/json"
     )
-    public Map<String, String> getIncomeByHour(HttpServletRequest request, @RequestBody Map<String, String> map) throws ParseException, IOException {
+    public Map<String, String> getIncomeByHour(@RequestBody Map<String, String> map) throws ParseException {
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("查询-%d").build();
         Date startDay = ConcurrentDateUtil.parse("2017-02-01");
         Date date = ConcurrentDateUtil.parse(map.get("day"));
@@ -338,16 +331,13 @@ public class MeterDataController {
             dataMap.get(info.getNumber())[info.getHour()] = info.getIncome();
         }
 
-        File file = new File(request.getServletContext().getRealPath("/take-taxi/" + map.get("day") + "-收入（单位：元）.xls"));
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-        ExcelUtil.writeData(request.getServletContext().getRealPath("/take-taxi/" + map.get("day") + "-收入（单位：元）.xls"), hourTitle, dataMap, "sheet");
+        String filename = map.get("day") + "-收入（单位：元）.xls";
+        ExcelUtil.writeData(filename, hourTitle, dataMap, "sheet");
         long end = System.currentTimeMillis();
         System.out.println("按小时划分查询时间（收入）：" + (end - start));
         pool.shutdown();
         Map<String, String> result = new HashMap<>(1);
-        result.put("link", "take-taxi/" + map.get("day") + "-收入（单位：元）.xls");
+        result.put("link", "files/" + map.get("day") + "-收入（单位：元）.xls");
         return result;
     }
 
@@ -356,7 +346,7 @@ public class MeterDataController {
             method = RequestMethod.POST,
             produces = "application/json"
     )
-    public Map<String, String> getEmptyMileage(HttpServletRequest request) throws IOException, ParseException {
+    public Map<String, String> getEmptyMileage() throws ParseException {
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("查询-%d").build();
 
         Map<String, double[]> dataMap = new HashMap<>();
@@ -413,15 +403,11 @@ public class MeterDataController {
         }
         pool.shutdown();
         long end = System.currentTimeMillis();
+        String filename = "按天划分-空载量（单位：公里）.xls";
+        ExcelUtil.writeData(filename, title, dataMap, "sheet");
         System.out.println("按天划分查询时间（空载量）:" + (end - start));
-        File file = new File(request.getServletContext().getRealPath("/take-taxi/按天划分-空载量（单位：公里）.xls"));
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-        ExcelUtil.writeData(request.getServletContext().getRealPath("/take-taxi/按天划分-空载量（单位：公里）.xls"), title, dataMap, "sheet");
         Map<String, String> map = new HashMap<>(1);
-        map.put("link", "take-taxi/按天划分-空载量（单位：公里）.xls");
-
+        map.put("link", "files/按天划分-空载量（单位：公里）.xls");
         return map;
     }
 
@@ -430,7 +416,7 @@ public class MeterDataController {
             method = RequestMethod.POST,
             produces = "application/json"
     )
-    public Map<String, String> getIncomeByDay(HttpServletRequest request) throws IOException, ParseException {
+    public Map<String, String> getIncomeByDay() throws ParseException {
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("查询-%d").build();
 
         // Common Thread Pool
@@ -476,16 +462,13 @@ public class MeterDataController {
             dataMap.get(info.getNumber())[(int) ((date1.getTime() - date.getTime()) / (1000 * 3600 * 24))] = info.getIncome();
         }
 
-        File file = new File(request.getServletContext().getRealPath("/take-taxi/按天划分-收入（单位：元）.xls"));
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-        ExcelUtil.writeData(request.getServletContext().getRealPath("/take-taxi/按天划分-收入（单位：元）.xls"), title, dataMap, "sheet");
+        String filename = "按天划分-收入（单位：元）.xls";
+        ExcelUtil.writeData(filename, title, dataMap, "sheet");
         pool.shutdown();
         long end = System.currentTimeMillis();
         System.out.println("按天划分查询时间（收入）" + (end - start));
         Map<String, String> map = new HashMap<>(1);
-        map.put("link", "take-taxi/按天划分-收入（单位：元）.xls");
+        map.put("link", "files/按天划分-收入（单位：元）.xls");
         return map;
     }
 
@@ -493,7 +476,7 @@ public class MeterDataController {
             value = "/total",
             method = RequestMethod.POST
     )
-    public Map<String, String> getTakeTaxiTotalCount(HttpServletRequest request) throws IOException {
+    public Map<String, String> getTakeTaxiTotalCount() throws IOException {
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("查询-%d").build();
 
         // Common Thread Pool
@@ -515,7 +498,6 @@ public class MeterDataController {
         List<ExcelPropertyIndexModel> data = new ArrayList<>();
         try {
             List<Future<List<TakeTaxiCount>>> futures = pool.invokeAll(list);
-            System.out.println("Test");
             int index = 1;
             for (Future<List<TakeTaxiCount>> future : futures) {
                 for (TakeTaxiCount taxiCount : future.get()) {
@@ -550,16 +532,26 @@ public class MeterDataController {
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        File file = new File(request.getServletContext().getRealPath("/take-taxi/打车总量（单位：次数）.xlsx"));
-        if (!file.exists()) {
-            file.createNewFile();
-        }
-        ExcelUtil.writeExcel(request.getServletContext().getRealPath("/take-taxi/打车总量（单位：次数）.xlsx"), data);
+
+        String filename = "打车总量（单位：次数）.xlsx";
+        ExcelUtil.writeExcel(filename, data);
         long endTime = System.currentTimeMillis();
         System.out.println((endTime - startTime));
         pool.shutdown();
         Map<String, String> map = new HashMap<>(1);
-        map.put("link", "take-taxi/打车总量（单位：次数）.xlsx");
+        map.put("link", "files/打车总量（单位：次数）.xlsx");
         return map;
+    }
+
+    @GetMapping("/files/{filename:.+}")
+    public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
+        Resource file = storageService.loadAsResource(filename);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION,
+                "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+    }
+
+    @ExceptionHandler(StorageFileNotFoundException.class)
+    public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
+        return ResponseEntity.notFound().build();
     }
 }

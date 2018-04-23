@@ -70,8 +70,6 @@ public interface GPSMeterDataHisDaoSql {
 
     List<DriverInfo> getIncomeByCustomQuery(@Param("table") String table, @Param("startTime") int startTime, @Param("endTime") int endTime);
 
-    List<TakeTaxiCount> takeTaxiCount(@Param("table") String table, @Param("startTime") int startTime, @Param("endTime") int endTime);
-
     List<DriverInfo> getEmptyMileage(@Param("table") String table);
 
     List<DriverInfo> getEmptyMileageByCustomQuery(@Param("table") String table, @Param("startTime") int startTime, @Param("endTime") int endTime);

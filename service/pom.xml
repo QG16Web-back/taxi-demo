@@ -39,15 +39,20 @@
 
         <dependency>
             <groupId>com.qg.taxi</groupId>
-            <artifactId>model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.qg.taxi</groupId>
             <artifactId>dao</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
+
         <dependency>
             <groupId>com.qg.taxi</groupId>
             <artifactId>util</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.qg.taxi</groupId>
+            <artifactId>other</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

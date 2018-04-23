@@ -45,18 +45,18 @@
         <dependency>
             <groupId>com.qg.taxi</groupId>
             <artifactId>service</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.qg.taxi</groupId>
             <artifactId>util</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
+
         <dependency>
-            <groupId>com.qg.taxi</groupId>
-            <artifactId>dao</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.qg.taxi</groupId>
-            <artifactId>other</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 
@@ -66,6 +66,7 @@
                 <configuration>
                     <mainClass>com.qg.taxi.web.WebApplication</mainClass>
                     <layout>ZIP</layout>
+                    <fork>true</fork>
                 </configuration>
                 <executions>
                     <execution>
@@ -73,7 +74,6 @@
                             <goal>repackage</goal>
                         </goals>
                     </execution>
-
                 </executions>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

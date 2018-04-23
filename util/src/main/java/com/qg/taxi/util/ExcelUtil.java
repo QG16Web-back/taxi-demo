@@ -12,23 +12,28 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+
 /**
- * @author:Wilder Gao
- * @time:2018/3/30
- * @Discription：
+ * @author 小铭
  */
 public class ExcelUtil {
+
+    private static String path = System.getProperty("user.dir") + "/resources/";
+
     private static String excelPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static";
     private static List<String> times = Arrays.asList("geoHash",
             "00:00:00~01:00:00", "01:00:00~02:00:00", "02:00:00~03:00:00", "03:00:00~04:00:00",
@@ -63,7 +68,6 @@ public class ExcelUtil {
                 cell1.setCellValue(countModel.getCount());
             }
         }
-
         FileOutputStream out = new FileOutputStream(new File(excelPath + "\\" + excelName + ".xlsx"));
         workbook.write(out);
         out.close();
@@ -72,7 +76,7 @@ public class ExcelUtil {
         return "http://192.168.1.111:8086//" + excelName + ".xlsx";
     }
 
-    public static void writeData(String filePath, String[] titles, Map<String, double[]> map, String sheetName) {
+    public static void writeData(String filename, String[] titles, Map<String, double[]> map, String sheetName) {
         Workbook workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet(sheetName);
         int rowIndex = 0;
@@ -94,7 +98,7 @@ public class ExcelUtil {
                 }
                 rowIndex++;
             }
-            FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+            FileOutputStream fileOutputStream = new FileOutputStream(path + filename);
             workbook.write(fileOutputStream);
             fileOutputStream.close();
         } catch (IOException e) {
@@ -102,8 +106,8 @@ public class ExcelUtil {
         }
     }
 
-    public static void writeExcel(String filePath, List<ExcelPropertyIndexModel> list) throws FileNotFoundException {
-        OutputStream out = new FileOutputStream(filePath);
+    public static void writeExcel(String filename, List<ExcelPropertyIndexModel> list) throws FileNotFoundException {
+        OutputStream out = new FileOutputStream(path + filename);
         try {
             ExcelWriter writer = new ExcelWriter(out, ExcelTypeEnum.XLSX);
             //写第一个sheet, sheet1  数据全是List<String> 无模型映射关系

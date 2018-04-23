@@ -18,7 +18,6 @@ import javax.sql.DataSource;
  * Created by logan on 2017/7/31.
  */
 @Configuration
-// 扫描 Mapper 接口并容器管理
 @PropertySource(ignoreResourceNotFound = true, value = "classpath:other.properties")
 @MapperScan(basePackages = OracleDataSourceConfig.PACKAGE, sqlSessionFactoryRef = "oracleSqlSessionFactory")
 public class OracleDataSourceConfig {
